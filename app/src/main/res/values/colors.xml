@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="github_dark">#23272E</color>
+    <color name="github_light">#FEFBF6</color>
+    <color name="font_dark">#e6edf3</color>
+    <color name="font_light">#1F2328</color>
+    <color name="font_muted">#848d97</color>
+    <color name="primary_dark">#303a50</color>
+    <color name="primary_light">#8CB9BD</color>
+    <color name="secondary_dark">#353B43</color>
+    <color name="secondary_light">#EAEAEA</color>
+    <color name="border">#d0d7de</color>
+    <color name="highlight_dark">#3FB950</color>
+    <color name="highlight_light">#B67352</color>
+</resources>

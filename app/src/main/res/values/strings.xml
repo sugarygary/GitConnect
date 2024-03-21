@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">GitConnect</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sample_username">sampleUsername</string>
+    <string name="search_users">Search users</string>
+    <string name="error_description">App is experiencing error while fetching data</string>
+    <string name="swipe_down_to_refresh">Swipe down to refresh</string>
+    <string name="unexpected_error">Unexpected Error</string>
+    <string name="sample_name">sampleName</string>
+    <string name="following_value">● %1$d Following</string>
+    <string name="followers_value">● %1$d Followers</string>
+    <string name="empty_following">Not following anyone</string>
+    <string name="empty_follower">No follower</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="reload">Reload</string>
+    <string name="tab_description">This is followers and following tab</string>
+    <string name="username_not_found">Username not found</string>
+    <string name="data_not_found">Data not found</string>
+    <string name="maintenance">This page is still on maintenance.\n While you wait, you can manually change your system theme in your settings.</string>
+</resources>

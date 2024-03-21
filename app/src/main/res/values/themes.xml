@@ -1,0 +1,24 @@
+<resources>
+
+    <style name="Base.Theme.GitConnect" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="backgroundColor">@color/github_light</item>
+        <item name="textFillColor">@color/font_light</item>
+        <item name="colorPrimary">@color/primary_light</item>
+        <item name="colorSecondary">@color/secondary_light</item>
+        <item name="android:fontFamily">@font/mona_sans</item>
+        <item name="android:statusBarColor">
+            @color/primary_light
+        </item>
+        <item name="android:textColor">@color/font_light</item>
+        <item name="colorControlHighlight">@color/highlight_light</item>
+    </style>
+
+    <style name="Theme.GitConnect" parent="Base.Theme.GitConnect" />
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/github_light</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/icon_inset</item>
+        <item name="windowSplashScreenAnimationDuration">200</item>
+        <item name="postSplashScreenTheme">@style/Theme.GitConnect</item>
+    </style>
+</resources>
