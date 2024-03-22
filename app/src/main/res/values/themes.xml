@@ -13,6 +13,7 @@
         <item name="colorControlHighlight">@color/highlight_light</item>
     </style>
 
+
     <style name="Theme.GitConnect" parent="Base.Theme.GitConnect" />
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">

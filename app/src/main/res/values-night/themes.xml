@@ -12,6 +12,7 @@
         <item name="android:textColor">@color/font_dark</item>
         <item name="colorControlHighlight">@color/highlight_dark</item>
     </style>
+    
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/github_dark</item>

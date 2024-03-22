@@ -1,18 +1,62 @@
 package com.sugarygary.gitconnect.ui.settings
 
+import android.content.res.Configuration
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.sugarygary.gitconnect.data.datastore.SettingPreferences
+import com.sugarygary.gitconnect.data.datastore.dataStore
 import com.sugarygary.gitconnect.databinding.FragmentSettingsBinding
 import com.sugarygary.gitconnect.ui.base.BaseFragment
 
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsBinding::inflate) {
+    private val viewModel: SettingsViewModel by viewModels {
+        SettingsViewModel.Companion.Factory(SettingPreferences.getInstance(requireActivity().application.dataStore))
+    }
 
     override fun setupUI() {
         binding.toolbarProfile.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
+        binding.toggleDark.setOnClickListener {
+            viewModel.saveThemeSetting(if (binding.toggleDark.isChecked) "dark" else "light")
+        }
+        binding.toggleSystem.setOnClickListener {
+            if (binding.toggleSystem.isChecked) {
+                viewModel.saveThemeSetting("default")
+            } else {
+                if (viewModel.getThemeSettings().value == "dark") {
+                    viewModel.saveThemeSetting("dark")
+                } else {
+                    viewModel.saveThemeSetting("light")
+                }
+            }
+        }
     }
 
-    override fun setupObservers() {}
+    override fun setupObservers() {
+        viewModel.getThemeSettings().observe(this) { themeMode: String ->
+            when (themeMode) {
+                "dark" -> {
+                    binding.toggleDark.isClickable = true
+                    binding.toggleSystem.isChecked = false
+                    binding.toggleDark.isChecked = true
+                }
 
+                "light" -> {
+                    binding.toggleDark.isClickable = true
+                    binding.toggleSystem.isChecked = false
+                    binding.toggleDark.isChecked = false
+                }
+
+                "default" -> {
+                    binding.toggleDark.isClickable = false
+                    binding.toggleSystem.isChecked = true
+                    val isDarkMode =
+                        requireActivity().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+                    binding.toggleDark.isChecked = isDarkMode
+                }
+            }
+        }
+    }
 }

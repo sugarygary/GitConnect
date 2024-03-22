@@ -19,29 +19,43 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/arrow_back" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:src="@drawable/disabled"
-        app:layout_constraintBottom_toTopOf="@+id/tvSettingsMaintenance"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarProfile"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:importantForAccessibility="no" />
-
     <TextView
-        android:id="@+id/tvSettingsMaintenance"
-        android:layout_width="300dp"
+        android:id="@+id/tvTheme"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/maintenance"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="104dp"
+        android:text="@string/theme"
+        android:textAlignment="textStart"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/toggle_system"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/toggle_system"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:minHeight="48dp"
+        android:text="@string/use_system_preference"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTheme"
+        app:useMaterialThemeColors="false" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/toggle_dark"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="84dp"
+        android:minHeight="48dp"
+        android:text="@string/use_dark_mode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTheme"
+        app:useMaterialThemeColors="false" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
