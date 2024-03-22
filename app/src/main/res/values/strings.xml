@@ -18,4 +18,7 @@
     <string name="username_not_found">Username not found</string>
     <string name="data_not_found">Data not found</string>
     <string name="maintenance">This page is still on maintenance.\n While you wait, you can manually change your system theme in your settings.</string>
+    <string name="theme">Theme</string>
+    <string name="use_system_preference">Use system preference</string>
+    <string name="use_dark_mode">Use dark mode</string>
 </resources>
