@@ -8,19 +8,30 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sugarygary.gitconnect.data.repository.Result
+import com.sugarygary.gitconnect.data.repository.model.UserModel
 import com.sugarygary.gitconnect.databinding.FragmentSearchBinding
 import com.sugarygary.gitconnect.ui.base.BaseFragment
+import com.sugarygary.gitconnect.ui.base.ViewModelFactory
 import com.sugarygary.gitconnect.utils.gone
+import com.sugarygary.gitconnect.utils.snackbarAction
 import com.sugarygary.gitconnect.utils.visible
 
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding::inflate) {
-    private val viewModel: SearchViewModel by viewModels()
+    private val viewModel: SearchViewModel by viewModels<SearchViewModel> {
+        ViewModelFactory.getInstance(requireActivity())
+    }
     private lateinit var userAdapter: SearchUserAdapter
+    override fun onResume() {
+        viewModel.searchUsers(binding.svUser.query.toString(), false)
+        super.onResume()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (viewModel.listUsers.value == null) {
-            viewModel.fetchUsers()
+            viewModel.searchUsers("")
         }
         //untuk pop transition dengan container transform
         postponeEnterTransition()
@@ -42,15 +53,29 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         )
     }
 
+    private fun onClickFavorite(isFavorite: Boolean, user: UserModel) {
+        viewModel.favoriteUser(isFavorite, user)
+        viewModel.searchUsers(binding.svUser.query.toString(), false)
+        val message = if (isFavorite) {
+            "Successfully removed ${user.login} from favorite"
+        } else {
+            "Successfully added ${user.login} to favorite"
+        }
+        requireActivity().snackbarAction(message, "UNDO") {
+            viewModel.favoriteUser(!isFavorite, user)
+            viewModel.searchUsers(binding.svUser.query.toString(), false)
+        }
+    }
+
     override fun setupUI() {
-        userAdapter = SearchUserAdapter(::onClickItem)
+        userAdapter = SearchUserAdapter(::onClickItem, ::onClickFavorite)
         binding.rvUsers.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.rvUsers.adapter = userAdapter
         binding.svUser.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 binding.svUser.clearFocus()
-                viewModel.fetchUsers(query ?: "")
+                viewModel.searchUsers(query ?: "")
                 return true
             }
 
@@ -58,11 +83,11 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
                 return false
             }
         })
-        binding.imageButton.setOnClickListener {
+        binding.ibSettings.setOnClickListener {
             findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToSettingsFragment())
         }
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.fetchUsers(binding.svUser.query.toString())
+            viewModel.searchUsers(binding.svUser.query.toString())
             binding.swipeRefresh.isRefreshing = false
         }
         binding.svUser.setOnClickListener {
@@ -71,16 +96,35 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
     }
 
     override fun setupObservers() {
-        viewModel.isError.observe(viewLifecycleOwner) { isError ->
-            setError(isError)
+        viewModel.listUsers.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Empty -> {
+                    setError(false)
+                    setEmpty(true)
+                    setLoading(false)
+                }
+
+                is Result.Error -> {
+                    setError(true)
+                    setEmpty(false)
+                    setLoading(false)
+                }
+
+                is Result.Loading -> {
+                    setError(false)
+                    setEmpty(false)
+                    setLoading(true)
+                }
+
+                is Result.Success -> {
+                    setError(false)
+                    setEmpty(false)
+                    setLoading(false)
+                    userAdapter.submitList(result.data)
+                }
+            }
         }
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            setLoading(isLoading)
-        }
-        viewModel.listUsers.observe(viewLifecycleOwner) { listUser ->
-            setEmpty(listUser.isEmpty())
-            userAdapter.submitList(listUser)
-        }
+
     }
 
     private fun setLoading(isLoading: Boolean) {

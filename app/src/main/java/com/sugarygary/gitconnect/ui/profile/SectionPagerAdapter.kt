@@ -8,6 +8,7 @@ import com.sugarygary.gitconnect.ui.follow.FollowFragment
 
 class SectionsPagerAdapter(activity: FragmentActivity, private var username: String) :
     FragmentStateAdapter(activity) {
+        
     override fun createFragment(position: Int): Fragment {
         val fragment = FollowFragment()
         fragment.arguments = Bundle().apply {
@@ -16,6 +17,7 @@ class SectionsPagerAdapter(activity: FragmentActivity, private var username: Str
         }
         return fragment
     }
+
 
     override fun getItemCount(): Int = 2
 }

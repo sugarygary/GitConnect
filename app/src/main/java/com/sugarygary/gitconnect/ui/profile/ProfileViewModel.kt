@@ -3,42 +3,22 @@ package com.sugarygary.gitconnect.ui.profile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.sugarygary.gitconnect.data.model.User
-import com.sugarygary.gitconnect.data.service.GithubApiConfig.Companion.getApiService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
+import com.sugarygary.gitconnect.data.repository.Result
+import com.sugarygary.gitconnect.data.repository.UserRepository
+import com.sugarygary.gitconnect.data.repository.model.UserModel
+import kotlinx.coroutines.launch
 
-class ProfileViewModel : ViewModel() {
-    private val _user = MutableLiveData<User>()
-    val user: LiveData<User> = _user
+class ProfileViewModel(private val userRepository: UserRepository) : ViewModel() {
+    private val _user = MutableLiveData<Result<UserModel>>()
+    val user: LiveData<Result<UserModel>> = _user
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    private val _isError = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
-    val isError: LiveData<Boolean> = _isError
-
-    fun fetchUserData(username: String) {
-        if (username.isEmpty()) {
-            _isError.value = true
-            return
+    fun fetchUserProfile(username: String, withLoading: Boolean = true) {
+        viewModelScope.launch {
+            userRepository.fetchUserProfile(username, withLoading).asFlow().collect {
+                _user.value = it
+            }
         }
-        _isError.value = false
-        _isLoading.value = true
-        getApiService().getUserProfile(username).enqueue(object : Callback<User> {
-            override fun onResponse(call: Call<User>, response: Response<User>) {
-                _isLoading.value = false
-                if (response.isSuccessful) {
-                    _user.value = response.body()
-                } else {
-                    _isError.value = true
-                }
-            }
-
-            override fun onFailure(call: Call<User>, t: Throwable) {
-                _isError.value = true
-                _isLoading.value = false
-            }
-        })
     }
 }

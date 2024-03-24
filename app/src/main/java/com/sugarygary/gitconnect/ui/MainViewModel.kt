@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
-import com.sugarygary.gitconnect.data.datastore.SettingPreferences
+import com.sugarygary.gitconnect.data.local.datastore.SettingPreferences
 
 class MainViewModel(private val pref: SettingPreferences) : ViewModel() {
     fun getThemeSettings(): LiveData<String> {

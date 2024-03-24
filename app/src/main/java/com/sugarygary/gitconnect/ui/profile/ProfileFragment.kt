@@ -9,21 +9,17 @@ import androidx.navigation.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialContainerTransform
 import com.sugarygary.gitconnect.R
+import com.sugarygary.gitconnect.data.repository.Result
 import com.sugarygary.gitconnect.databinding.FragmentProfileBinding
 import com.sugarygary.gitconnect.ui.base.BaseFragment
+import com.sugarygary.gitconnect.ui.base.ViewModelFactory
 import com.sugarygary.gitconnect.utils.glide
 import com.sugarygary.gitconnect.utils.invisible
 import com.sugarygary.gitconnect.utils.visible
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
-    private val viewModel: ProfileViewModel by viewModels()
-
-    companion object {
-        @StringRes
-        private val TAB_TITLES = intArrayOf(
-            R.string.followers,
-            R.string.following
-        )
+    private val viewModel: ProfileViewModel by viewModels<ProfileViewModel> {
+        ViewModelFactory.getInstance(requireActivity())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,7 +28,9 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         sharedElementEnterTransition = MaterialContainerTransform()
         binding.ivProfileAvatar.transitionName = arguments?.getString("shared_transition_name")
         if (viewModel.user.value == null) {
-            viewModel.fetchUserData(arguments?.getString("username") ?: "")
+            viewModel.fetchUserProfile(arguments?.getString("username") ?: "")
+        } else {
+            viewModel.fetchUserProfile(arguments?.getString("username") ?: "", false)
         }
         //untuk pop transition dengan container transform
         postponeEnterTransition()
@@ -55,7 +53,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             it.findNavController().popBackStack()
         }
         binding.btnReload.setOnClickListener {
-            viewModel.fetchUserData(arguments?.getString("username") ?: "")
+            viewModel.fetchUserProfile(arguments?.getString("username") ?: "")
         }
     }
 
@@ -78,18 +76,45 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     override fun setupObservers() {
-        viewModel.user.observe(viewLifecycleOwner) {
-            binding.ivProfileAvatar.glide(it.avatarUrl.toString())
-            binding.tvProfileUsername.text = it.login
-            binding.tvProfileName.text = it.name
-            binding.tvFollowers.text = resources.getString(R.string.followers_value, it.followers)
-            binding.tvFollowing.text = resources.getString(R.string.following_value, it.following)
-        }
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            setLoading(isLoading)
-        }
-        viewModel.isError.observe(viewLifecycleOwner) { isError ->
-            setError(isError)
+        viewModel.user.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Empty -> {
+                    setLoading(false)
+                    setError(true)
+                }
+
+                is Result.Error -> {
+                    setLoading(false)
+                    setError(true)
+                }
+
+                is Result.Loading -> {
+                    setError(false)
+                    setLoading(true)
+                }
+
+                is Result.Success -> {
+                    setLoading(false)
+                    setError(false)
+                    binding.ivProfileAvatar.glide(result.data.avatarUrl.toString())
+                    binding.tvProfileUsername.text = result.data.login
+                    binding.tvProfileName.text = result.data.name
+                    binding.tvFollowers.text =
+                        resources.getString(R.string.followers_value, result.data.followers)
+                    binding.tvFollowing.text =
+                        resources.getString(R.string.following_value, result.data.following)
+                }
+            }
+
         }
     }
+
+    companion object {
+        @StringRes
+        private val TAB_TITLES = intArrayOf(
+            R.string.followers,
+            R.string.following
+        )
+    }
+
 }

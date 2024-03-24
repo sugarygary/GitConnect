@@ -1,4 +1,4 @@
-package com.sugarygary.gitconnect.data.datastore
+package com.sugarygary.gitconnect.data.local.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore

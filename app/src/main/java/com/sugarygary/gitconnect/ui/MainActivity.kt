@@ -1,4 +1,4 @@
-package com.sugarygary.gitconnect.ui.navhost
+package com.sugarygary.gitconnect.ui
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -9,9 +9,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.sugarygary.gitconnect.databinding.ActivityMainBinding
-import com.sugarygary.gitconnect.data.datastore.SettingPreferences
-import com.sugarygary.gitconnect.data.datastore.dataStore
-import com.sugarygary.gitconnect.ui.MainViewModel
+import com.sugarygary.gitconnect.data.local.datastore.SettingPreferences
+import com.sugarygary.gitconnect.data.local.datastore.dataStore
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels {
@@ -30,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         }
         viewModel.getThemeSettings().observe(
             this
-        ) { themeMode: String ->
+        ) { themeMode ->
             when (themeMode) {
                 "dark" -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

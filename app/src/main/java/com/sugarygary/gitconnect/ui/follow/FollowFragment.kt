@@ -7,29 +7,57 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sugarygary.gitconnect.R
+import com.sugarygary.gitconnect.data.repository.Result
+import com.sugarygary.gitconnect.data.repository.model.UserModel
 import com.sugarygary.gitconnect.databinding.FragmentFollowBinding
 import com.sugarygary.gitconnect.ui.base.BaseFragment
+import com.sugarygary.gitconnect.ui.base.ViewModelFactory
 import com.sugarygary.gitconnect.ui.profile.ProfileFragmentDirections
 import com.sugarygary.gitconnect.utils.gone
+import com.sugarygary.gitconnect.utils.snackbarAction
 import com.sugarygary.gitconnect.utils.visible
 
 class FollowFragment : BaseFragment<FragmentFollowBinding>(FragmentFollowBinding::inflate) {
-    private val viewModel: FollowViewModel by viewModels()
+    private val viewModel: FollowViewModel by viewModels {
+        ViewModelFactory.getInstance(requireActivity())
+    }
     private lateinit var followUserAdapter: FollowUserAdapter
+
+    override fun onResume() {
+        val position = arguments?.getInt(ARG_POSITION)
+        val username = arguments?.getString(ARG_USERNAME)
+        when (position) {
+            //FOLLOWER
+            1 -> {
+                viewModel.fetchUserFollowers(username ?: "", false)
+            }
+            //FOLLOWING
+            2 -> {
+                viewModel.fetchUserFollowing(username ?: "", false)
+            }
+        }
+        super.onResume()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val position = arguments?.getInt(ARG_POSITION)
         val username = arguments?.getString(ARG_USERNAME)
-        if (viewModel.follow.value == null) {
-            when (position) {
-                //FOLLOWER
-                1 -> {
+        when (position) {
+            //FOLLOWER
+            1 -> {
+                if (viewModel.follow.value == null) {
                     viewModel.fetchUserFollowers(username ?: "")
+                } else {
+                    viewModel.fetchUserFollowers(username ?: "", false)
                 }
-                //FOLLOWING
-                2 -> {
+            }
+            //FOLLOWING
+            2 -> {
+                if (viewModel.follow.value == null) {
                     viewModel.fetchUserFollowing(username ?: "")
+                } else {
+                    viewModel.fetchUserFollowing(username ?: "", false)
                 }
             }
         }
@@ -37,7 +65,7 @@ class FollowFragment : BaseFragment<FragmentFollowBinding>(FragmentFollowBinding
 
     private fun onClickItem(imageView: View, username: String) {
         //extras untuk container transform
-        val extras = FragmentNavigatorExtras(imageView to imageView.transitionName.also(::println))
+        val extras = FragmentNavigatorExtras(imageView to imageView.transitionName)
         val sharedTransitionName = imageView.transitionName
         findNavController().navigate(
             ProfileFragmentDirections.actionProfileFragmentSelf(
@@ -46,17 +74,53 @@ class FollowFragment : BaseFragment<FragmentFollowBinding>(FragmentFollowBinding
         )
     }
 
+    private fun onClickFavorite(isFavorite: Boolean, user: UserModel) {
+        val username = arguments?.getString(ARG_USERNAME)
+        val position = arguments?.getInt(ARG_POSITION)
+        viewModel.favoriteUser(isFavorite, user)
+        when (position) {
+            //FOLLOWER
+            1 -> {
+                viewModel.fetchUserFollowers(username ?: "", false)
+            }
+            //FOLLOWING
+            2 -> {
+                viewModel.fetchUserFollowing(username ?: "", false)
+            }
+        }
+        val message = if (isFavorite) {
+            "Successfully removed ${user.login} from favorite"
+        } else {
+            "Successfully added ${user.login} to favorite"
+        }
+        requireActivity().snackbarAction(message, "UNDO") {
+            viewModel.favoriteUser(!isFavorite, user)
+            when (position) {
+                //FOLLOWER
+                1 -> {
+                    viewModel.fetchUserFollowers(username ?: "", false)
+                }
+                //FOLLOWING
+                2 -> {
+                    viewModel.fetchUserFollowing(username ?: "", false)
+                }
+            }
+        }
+    }
+
     override fun setupUI() {
         val position = arguments?.getInt(ARG_POSITION)
         when (position) {
             //FOLLOWER
             1 -> {
-                followUserAdapter = FollowUserAdapter("from-follower", ::onClickItem)
+                followUserAdapter =
+                    FollowUserAdapter("from-follower", ::onClickItem, ::onClickFavorite)
                 binding.tvEmpty.text = resources.getString(R.string.empty_follower)
             }
             //FOLLOWING
             2 -> {
-                followUserAdapter = FollowUserAdapter("from-following", ::onClickItem)
+                followUserAdapter =
+                    FollowUserAdapter("from-following", ::onClickItem, ::onClickFavorite)
                 binding.tvEmpty.text = resources.getString(R.string.empty_following)
             }
         }
@@ -66,15 +130,34 @@ class FollowFragment : BaseFragment<FragmentFollowBinding>(FragmentFollowBinding
     }
 
     override fun setupObservers() {
-        viewModel.isError.observe(viewLifecycleOwner) { isError ->
-            setError(isError)
-        }
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            setLoading(isLoading)
-        }
-        viewModel.follow.observe(viewLifecycleOwner) { follow ->
-            setEmpty(follow.isEmpty())
-            followUserAdapter.submitList(follow)
+        viewModel.follow.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Empty -> {
+                    setLoading(false)
+                    setError(false)
+                    setEmpty(true)
+                }
+
+                is Result.Error -> {
+                    setLoading(false)
+                    setEmpty(false)
+                    setError(true)
+                }
+
+                is Result.Loading -> {
+                    setEmpty(false)
+                    setError(false)
+                    setLoading(true)
+                }
+
+                is Result.Success -> {
+                    setLoading(false)
+                    setEmpty(false)
+                    setError(false)
+                    followUserAdapter.submitList(result.data)
+                }
+            }
+
         }
     }
 

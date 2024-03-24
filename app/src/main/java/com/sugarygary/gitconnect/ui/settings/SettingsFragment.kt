@@ -3,8 +3,8 @@ package com.sugarygary.gitconnect.ui.settings
 import android.content.res.Configuration
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.sugarygary.gitconnect.data.datastore.SettingPreferences
-import com.sugarygary.gitconnect.data.datastore.dataStore
+import com.sugarygary.gitconnect.data.local.datastore.SettingPreferences
+import com.sugarygary.gitconnect.data.local.datastore.dataStore
 import com.sugarygary.gitconnect.databinding.FragmentSettingsBinding
 import com.sugarygary.gitconnect.ui.base.BaseFragment
 
@@ -13,6 +13,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
     private val viewModel: SettingsViewModel by viewModels {
         SettingsViewModel.Companion.Factory(SettingPreferences.getInstance(requireActivity().application.dataStore))
     }
+
+    private fun isDarkMode(): Boolean =
+        requireActivity().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
     override fun setupUI() {
         binding.toolbarProfile.setNavigationOnClickListener {
@@ -25,7 +28,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
             if (binding.toggleSystem.isChecked) {
                 viewModel.saveThemeSetting("default")
             } else {
-                if (viewModel.getThemeSettings().value == "dark") {
+                if (isDarkMode()) {
                     viewModel.saveThemeSetting("dark")
                 } else {
                     viewModel.saveThemeSetting("light")
@@ -52,9 +55,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
                 "default" -> {
                     binding.toggleDark.isClickable = false
                     binding.toggleSystem.isChecked = true
-                    val isDarkMode =
-                        requireActivity().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-                    binding.toggleDark.isChecked = isDarkMode
+                    binding.toggleDark.isChecked = isDarkMode()
                 }
             }
         }

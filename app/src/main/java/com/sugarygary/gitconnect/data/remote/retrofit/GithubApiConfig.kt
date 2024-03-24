@@ -1,4 +1,4 @@
-package com.sugarygary.gitconnect.data.service
+package com.sugarygary.gitconnect.data.remote.retrofit
 
 import com.sugarygary.gitconnect.BuildConfig
 import okhttp3.OkHttpClient
