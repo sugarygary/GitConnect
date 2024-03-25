@@ -102,8 +102,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
             when (result) {
                 is Result.Empty -> {
                     setError(false)
-                    setEmpty(true)
                     setLoading(false)
+                    setEmpty(true)
                 }
 
                 is Result.Error -> {
