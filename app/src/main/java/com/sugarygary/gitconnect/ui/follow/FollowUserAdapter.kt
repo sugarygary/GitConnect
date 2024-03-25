@@ -15,8 +15,7 @@ class FollowUserAdapter(
     private val identifier: String,
     private val onClick: (ImageView, String) -> Unit,
     private val onClickFavorite: (Boolean, UserModel) -> Unit
-) :
-    ListAdapter<UserModel, FollowUserAdapter.FollowUserViewHolder>(DIFF_CALLBACK) {
+) : ListAdapter<UserModel, FollowUserAdapter.FollowUserViewHolder>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowUserViewHolder {
         val binding = UserItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FollowUserViewHolder(binding)

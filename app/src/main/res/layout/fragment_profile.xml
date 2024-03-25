@@ -24,8 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/ivError"
@@ -149,7 +148,7 @@
                             android:id="@+id/tvFollowers"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="16dp"
                             android:text="@string/followers_value"
                             android:textSize="12sp"
                             app:layout_constraintEnd_toStartOf="@+id/tvFollowing"
@@ -161,13 +160,54 @@
                             android:id="@+id/tvFollowing"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="16dp"
                             android:text="@string/following_value"
                             android:textSize="12sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.5"
                             app:layout_constraintStart_toEndOf="@+id/tvFollowers"
                             app:layout_constraintTop_toBottomOf="@+id/tvProfileName" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnProfileFavorite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="4dp"
+                            android:layout_marginTop="8dp"
+                            android:backgroundTint="?attr/colorControlHighlight"
+                            android:padding="8dp"
+                            android:text="@string/unfavorite"
+                            android:textColor="?attr/textFillColor"
+                            app:cornerRadius="8dp"
+                            app:icon="@drawable/not_favorite"
+                            app:iconTint="?attr/textFillColor"
+                            app:layout_constraintEnd_toStartOf="@+id/btnBrowser"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tvFollowers"
+                            app:rippleColor="?attr/colorPrimary" />
+
+                        <Button
+                            android:id="@+id/btnBrowser"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="4dp"
+                            android:backgroundTint="?attr/colorControlHighlight"
+                            android:padding="8dp"
+                            android:text="@string/open_in_browser"
+                            android:textColor="?attr/textFillColor"
+                            app:cornerRadius="8dp"
+                            app:icon="@drawable/open_in_browser"
+                            app:iconTint="?attr/textFillColor"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintStart_toEndOf="@+id/btnProfileFavorite"
+                            app:layout_constraintTop_toTopOf="@+id/btnProfileFavorite"
+                            app:rippleColor="?attr/colorPrimary" />
+
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout

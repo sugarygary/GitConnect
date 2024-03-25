@@ -14,12 +14,10 @@ abstract class FavoriteUserDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var instance: FavoriteUserDatabase? = null
-        fun getInstance(context: Context): FavoriteUserDatabase =
-            instance ?: synchronized(this) {
-                instance ?: Room.databaseBuilder(
-                    context.applicationContext,
-                    FavoriteUserDatabase::class.java, "Favorites.db"
-                ).build()
-            }
+        fun getInstance(context: Context): FavoriteUserDatabase = instance ?: synchronized(this) {
+            instance ?: Room.databaseBuilder(
+                context.applicationContext, FavoriteUserDatabase::class.java, "Favorites.db"
+            ).build()
+        }
     }
 }

@@ -14,20 +14,14 @@ class GithubApiConfig {
             } else {
                 HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
             }
-            val client = OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor)
-                .addInterceptor { chain ->
+            val client =
+                OkHttpClient.Builder().addInterceptor(loggingInterceptor).addInterceptor { chain ->
                     val newRequest = chain.request().newBuilder()
-                        .addHeader("Authorization", "token ${BuildConfig.TOKEN}")
-                        .build()
+                        .addHeader("Authorization", "token ${BuildConfig.TOKEN}").build()
                     chain.proceed(newRequest)
-                }
-                .build()
-            val retrofit = Retrofit.Builder()
-                .baseUrl(BuildConfig.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build()
+                }.build()
+            val retrofit = Retrofit.Builder().baseUrl(BuildConfig.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create()).client(client).build()
             return retrofit.create(GithubApiService::class.java)
         }
     }

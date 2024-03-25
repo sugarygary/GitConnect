@@ -14,7 +14,7 @@ import com.sugarygary.gitconnect.ui.base.BaseFragment
 import com.sugarygary.gitconnect.ui.base.ViewModelFactory
 import com.sugarygary.gitconnect.ui.profile.ProfileFragmentDirections
 import com.sugarygary.gitconnect.utils.gone
-import com.sugarygary.gitconnect.utils.snackbarAction
+import com.sugarygary.gitconnect.utils.makeSnackbar
 import com.sugarygary.gitconnect.utils.visible
 
 class FollowFragment : BaseFragment<FragmentFollowBinding>(FragmentFollowBinding::inflate) {
@@ -93,7 +93,7 @@ class FollowFragment : BaseFragment<FragmentFollowBinding>(FragmentFollowBinding
         } else {
             "Successfully added ${user.login} to favorite"
         }
-        requireActivity().snackbarAction(message, "UNDO") {
+        requireActivity().makeSnackbar(message, "UNDO") {
             viewModel.favoriteUser(!isFavorite, user)
             when (position) {
                 //FOLLOWER

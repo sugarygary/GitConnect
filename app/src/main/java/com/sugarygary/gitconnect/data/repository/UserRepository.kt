@@ -11,22 +11,23 @@ import com.sugarygary.gitconnect.data.repository.model.UserModel
 class UserRepository private constructor(
     private val apiService: GithubApiService, private val favoriteUserDao: FavoriteUserDao
 ) {
-    fun fetchFavoriteUsers(): LiveData<Result<List<UserModel>>> = liveData {
-        emit(Result.Loading)
-        try {
-            val data = favoriteUserDao.getAll()
-            if (data.isEmpty()) {
-                emit(Result.Empty)
-            } else {
-                val result: List<UserModel> = data.map { favoriteUser ->
-                    mapEntityToModel(favoriteUser)
+    fun fetchFavoriteUsers(withLoading: Boolean = true): LiveData<Result<List<UserModel>>> =
+        liveData {
+            if (withLoading) emit(Result.Loading)
+            try {
+                val data = favoriteUserDao.getAll()
+                if (data.isEmpty()) {
+                    emit(Result.Empty)
+                } else {
+                    val result: List<UserModel> = data.map { favoriteUser ->
+                        mapEntityToModel(favoriteUser)
+                    }
+                    emit(Result.Success(result))
                 }
-                emit(Result.Success(result))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
             }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
         }
-    }
 
     fun fetchUserProfile(username: String, withLoading: Boolean): LiveData<Result<UserModel>> =
         liveData {
@@ -45,8 +46,7 @@ class UserRepository private constructor(
         }
 
     fun fetchUserFollowers(
-        username: String,
-        withLoading: Boolean = true
+        username: String, withLoading: Boolean = true
     ): LiveData<Result<List<UserModel>>> = liveData {
         if (username.isEmpty()) {
             emit(Result.Error("Username cannot be empty"))
@@ -70,8 +70,7 @@ class UserRepository private constructor(
     }
 
     fun fetchUserFollowing(
-        username: String,
-        withLoading: Boolean = true
+        username: String, withLoading: Boolean = true
     ): LiveData<Result<List<UserModel>>> = liveData {
         if (username.isEmpty()) {
             emit(Result.Error("Username cannot be empty"))
@@ -95,8 +94,7 @@ class UserRepository private constructor(
     }
 
     fun searchUsers(
-        username: String,
-        withLoading: Boolean = true
+        username: String, withLoading: Boolean = true
     ): LiveData<Result<List<UserModel>>> = liveData {
         if (withLoading) emit(Result.Loading)
         try {

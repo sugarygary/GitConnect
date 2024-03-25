@@ -54,6 +54,18 @@
                 android:minHeight="48dp"
                 app:srcCompat="@drawable/ic_settings" />
 
+            <ImageButton
+                android:id="@+id/ibFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/ibSettings"
+                android:background="#00FFFFFF"
+                android:importantForAccessibility="no"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                app:srcCompat="@drawable/ic_favorite" />
+
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 

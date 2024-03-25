@@ -21,4 +21,8 @@
     <string name="theme">Theme</string>
     <string name="use_system_preference">Use system preference</string>
     <string name="use_dark_mode">Use dark mode</string>
+    <string name="open_in_browser">Open in Browser</string>
+    <string name="favorite">Favorite</string>
+    <string name="unfavorite">Unfavorite</string>
+    <string name="no_favorite_user_found">No favorite user found</string>
 </resources>

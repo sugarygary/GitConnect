@@ -14,7 +14,7 @@ import com.sugarygary.gitconnect.databinding.FragmentSearchBinding
 import com.sugarygary.gitconnect.ui.base.BaseFragment
 import com.sugarygary.gitconnect.ui.base.ViewModelFactory
 import com.sugarygary.gitconnect.utils.gone
-import com.sugarygary.gitconnect.utils.snackbarAction
+import com.sugarygary.gitconnect.utils.makeSnackbar
 import com.sugarygary.gitconnect.utils.visible
 
 
@@ -35,11 +35,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         }
         //untuk pop transition dengan container transform
         postponeEnterTransition()
-        (requireView().parent as ViewGroup).viewTreeObserver
-            .addOnPreDrawListener {
-                startPostponedEnterTransition()
-                true
-            }
+        (requireView().parent as ViewGroup).viewTreeObserver.addOnPreDrawListener {
+            startPostponedEnterTransition()
+            true
+        }
     }
 
     private fun onClickItem(imageView: View, username: String) {
@@ -61,7 +60,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         } else {
             "Successfully added ${user.login} to favorite"
         }
-        requireActivity().snackbarAction(message, "UNDO") {
+        requireActivity().makeSnackbar(message, "UNDO") {
             viewModel.favoriteUser(!isFavorite, user)
             viewModel.searchUsers(binding.svUser.query.toString(), false)
         }
@@ -86,6 +85,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         binding.ibSettings.setOnClickListener {
             findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToSettingsFragment())
         }
+        binding.ibFavorite.setOnClickListener {
+            findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToFavoriteFragment())
+        }
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.searchUsers(binding.svUser.query.toString())
             binding.swipeRefresh.isRefreshing = false
@@ -105,9 +107,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
                 }
 
                 is Result.Error -> {
-                    setError(true)
                     setEmpty(false)
                     setLoading(false)
+                    setError(true)
                 }
 
                 is Result.Loading -> {
@@ -139,7 +141,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         binding.loadingIndicator.gone()
         binding.layoutError.gone()
         binding.layoutEmpty.gone()
-
     }
 
     private fun setError(isError: Boolean) {

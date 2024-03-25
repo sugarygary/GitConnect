@@ -13,6 +13,11 @@
         <item name="colorControlHighlight">@color/highlight_light</item>
     </style>
 
+    <style name="ToolbarTitle" parent="Base.Theme.GitConnect">
+        <item name="android:fontFamily">@font/mona_sans_bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
 
     <style name="Theme.GitConnect" parent="Base.Theme.GitConnect" />
 

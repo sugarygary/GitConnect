@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sugarygary.gitconnect.data.repository.UserRepository
 import com.sugarygary.gitconnect.di.Injection
+import com.sugarygary.gitconnect.ui.favorite.FavoriteViewModel
 import com.sugarygary.gitconnect.ui.follow.FollowViewModel
 import com.sugarygary.gitconnect.ui.profile.ProfileViewModel
 import com.sugarygary.gitconnect.ui.search.SearchViewModel
@@ -17,6 +18,7 @@ class ViewModelFactory private constructor(private val userRepository: UserRepos
             FollowViewModel::class.java -> FollowViewModel(userRepository) as T
             SearchViewModel::class.java -> SearchViewModel(userRepository) as T
             ProfileViewModel::class.java -> ProfileViewModel(userRepository) as T
+            FavoriteViewModel::class.java -> FavoriteViewModel(userRepository) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
 

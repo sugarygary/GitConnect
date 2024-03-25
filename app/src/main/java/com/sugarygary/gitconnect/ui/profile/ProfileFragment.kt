@@ -1,9 +1,12 @@
 package com.sugarygary.gitconnect.ui.profile
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
@@ -15,6 +18,7 @@ import com.sugarygary.gitconnect.ui.base.BaseFragment
 import com.sugarygary.gitconnect.ui.base.ViewModelFactory
 import com.sugarygary.gitconnect.utils.glide
 import com.sugarygary.gitconnect.utils.invisible
+import com.sugarygary.gitconnect.utils.makeSnackbar
 import com.sugarygary.gitconnect.utils.visible
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
@@ -34,11 +38,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         }
         //untuk pop transition dengan container transform
         postponeEnterTransition()
-        (requireView().parent as ViewGroup).viewTreeObserver
-            .addOnPreDrawListener {
-                startPostponedEnterTransition()
-                true
-            }
+        (requireView().parent as ViewGroup).viewTreeObserver.addOnPreDrawListener {
+            startPostponedEnterTransition()
+            true
+        }
 
     }
 
@@ -103,6 +106,43 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                         resources.getString(R.string.followers_value, result.data.followers)
                     binding.tvFollowing.text =
                         resources.getString(R.string.following_value, result.data.following)
+                    binding.btnBrowser.setOnClickListener {
+                        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(result.data.htmlUrl))
+                        requireActivity().startActivity(webIntent)
+                    }
+                    binding.btnProfileFavorite.apply {
+                        if (result.data.isFavorite) {
+                            text = resources.getString(R.string.unfavorite)
+                            icon = ContextCompat.getDrawable(requireContext(), R.drawable.favorite)
+                            setOnClickListener {
+                                viewModel.favoriteUser(result.data.isFavorite, result.data)
+                                viewModel.fetchUserProfile(result.data.login, false)
+                                requireActivity().makeSnackbar(
+                                    "Succesfully removed ${result.data.login} from favorite", "UNDO"
+                                ) {
+                                    viewModel.favoriteUser(!result.data.isFavorite, result.data)
+                                    viewModel.fetchUserProfile(result.data.login, false)
+                                }
+                            }
+                        } else {
+                            text = resources.getString(
+                                R.string.favorite
+                            )
+                            icon =
+                                ContextCompat.getDrawable(requireContext(), R.drawable.not_favorite)
+                            setOnClickListener {
+                                viewModel.favoriteUser(result.data.isFavorite, result.data)
+                                viewModel.fetchUserProfile(result.data.login, false)
+                                requireActivity().makeSnackbar(
+                                    "Succesfully added ${result.data.login} to favorite", "UNDO"
+                                ) {
+                                    viewModel.favoriteUser(!result.data.isFavorite, result.data)
+                                    viewModel.fetchUserProfile(result.data.login, false)
+                                }
+                            }
+                        }
+                    }
+
                 }
             }
 
@@ -112,8 +152,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     companion object {
         @StringRes
         private val TAB_TITLES = intArrayOf(
-            R.string.followers,
-            R.string.following
+            R.string.followers, R.string.following
         )
     }
 
